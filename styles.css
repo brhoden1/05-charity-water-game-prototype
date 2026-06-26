@@ -13,14 +13,20 @@ Secondary Colors:
 - Pink:       #F16061
 
 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
 
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: max-content;
   background: #E3F2FD;
+  overflow: hidden;
 }
 
 .header > div {
@@ -29,13 +35,22 @@ body {
 
 header img {
   display: block;
-  margin: 0 auto 1rem;
+  margin: 10px auto;
   max-width: 100px;
-  height: auto
+}
+
+h1 {
+  text-align: center;
+  margin: 5px;
+}
+
+p {
+  margin-top: 10px;
+  margin-bottom: 15px;
 }
 
 .wrapper {
-  width: 100%;
+  width: 750px;
   height: 750px;
   display: flex;
   overflow: hidden;
@@ -63,28 +78,19 @@ header img {
 .play-board .food {
   background: #FF003D;
 }
+
 .play-board .head {
   background: #60CBFF;
-}
-.controls {
-  display: none;
-  justify-content: space-between;
 }
 
 @media screen and (max-width: 800px) {
   .wrapper {
     width: 90vmin;
-    height: 115vmin;
+    max-height: 135vmin;
   }
   .game-details {
     font-size: 1rem;
     padding: 15px 27px;
   }
-  .controls {
-    display: flex;
-  }
-  .controls i {
-    padding: 15px 0;
-    font-size: 1rem;
-  }
+
 }
