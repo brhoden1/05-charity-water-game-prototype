@@ -12,10 +12,33 @@ let velocityX = 0, velocityY = 0;
 let snakeBody = [];
 let setIntervalId;
 let score = 0;
+let hasTriggeredHighScoreConfetti = false;
 
 // Getting high score from the local storage
-let highScore = localStorage.getItem("high-score") || 0;
+let highScore = parseInt(localStorage.getItem("high-score"), 10) || 0;
 highScoreElement.innerText = `High Score: ${highScore}`;
+
+const confettiContainer = document.querySelector('.confetti-container');
+const confettiColors = ['#FFC907', '#2E9DF7', '#4FCB53', '#FF902A', '#F5402C', '#8BD1CB'];
+
+const createConfettiParticle = () => {
+  const confetti = document.createElement('span');
+  confetti.className = 'confetti';
+  confetti.style.left = `${Math.random() * 100}%`;
+  confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+  confetti.style.width = `${Math.random() * 6 + 6}px`;
+  confetti.style.height = `${Math.random() * 12 + 10}px`;
+  confetti.style.setProperty('--x', `${Math.random() * 120 - 60}px`);
+  confettiContainer.appendChild(confetti);
+
+  setTimeout(() => confetti.remove(), 1900);
+};
+
+const burstConfetti = () => {
+  for (let i = 0; i < 30; i += 1) {
+    setTimeout(createConfettiParticle, i * 40);
+  }
+};
 
 // Passing a random 1 - 30 value as food position
 const updateFoodPosition = () => {
@@ -26,22 +49,24 @@ const updateFoodPosition = () => {
 // Clearing the timer and reloading the page on game over
 const handleGameOver = () => {
     clearInterval(setIntervalId);
-    alert("Game Over! Press OK to replay...");
+    alert("Don't worry, this is only a bump in the road! Click okay to try again!");
     location.reload();
   }
 
-// Change the snake's velocity when the user presses an arrow key.
+// Change the snake's velocity when the user presses an arrow key or WASD key.
 const changeDirection = (event) => {
-    if (event.key === "ArrowUp" && velocityY !== 1) {
+    const key = event.key.toLowerCase();
+
+    if ((key === "arrowup" || key === "w") && velocityY !== 1) {
         velocityX = 0;
         velocityY = -1;
-    } else if (event.key === "ArrowDown" && velocityY !== -1) {
+    } else if ((key === "arrowdown" || key === "s") && velocityY !== -1) {
         velocityX = 0;
         velocityY = 1;
-    } else if (event.key === "ArrowLeft" && velocityX !== 1) {
+    } else if ((key === "arrowleft" || key === "a") && velocityX !== 1) {
         velocityX = -1;
         velocityY = 0;
-    } else if (event.key === "ArrowRight" && velocityX !== -1) {
+    } else if ((key === "arrowright" || key === "d") && velocityX !== -1) {
         velocityX = 1;
         velocityY = 0;
     }
@@ -93,10 +118,17 @@ const initGame = () => {
         updateFoodPosition();
         snakeBody.push([foodY, foodX]); // Pushing food position to snake body array
         score++; // increment score by 1
-        highScore = score >= highScore ? score : highScore;
-        localStorage.setItem("high-score", highScore);
         scoreElement.innerText = `Score: ${score}`;
-        highScoreElement.innerText = `High Score: ${highScore}`;
+
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem("high-score", highScore);
+            highScoreElement.innerText = `High Score: ${highScore}`;
+            if (!hasTriggeredHighScoreConfetti) {
+                burstConfetti();
+                hasTriggeredHighScoreConfetti = true;
+            }
+        }
     }
     // Updating the snake's head position based on the current velocity
     snakeX += velocityX;
@@ -112,8 +144,9 @@ const initGame = () => {
         return gameOver = true;
     }
     for (let i = 0; i < snakeBody.length; i++) {
-        // Adding a div for each part of the snake's body
-        html += `<div class="head" style="grid-area: ${snakeBody[i][1]} / ${snakeBody[i][0]}"></div>`;
+        // Add a div for the snake head, and a different class for the rest of the body
+        const snakeClass = i === 0 ? "head" : "body";
+        html += `<div class="${snakeClass}" style="grid-area: ${snakeBody[i][1]} / ${snakeBody[i][0]}"></div>`;
         // Checking if the snake head hit the body, if so set gameOver to true
         if (i !== 0 && snakeBody[0][1] === snakeBody[i][1] && snakeBody[0][0] === snakeBody[i][0]) {
             gameOver = true;

@@ -17,7 +17,7 @@ Secondary Colors:
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 body {
@@ -25,7 +25,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #E3F2FD;
+  background: white;
   overflow: hidden;
 }
 
@@ -52,14 +52,44 @@ p {
 .wrapper {
   width: 750px;
   height: 750px;
+  position: relative;
   display: flex;
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
   border-radius: 5px;
-  background: #293447;
+  background: #003366;
   box-shadow: 0 20px 40px rgba(52, 87, 220, 0.2);
 }
+
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 16px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti-fall 1.8s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(260px) translateX(var(--x, 0px)) rotate(720deg);
+  }
+}
+
 .game-details {
   color: #B8C6DC;
   font-weight: 500;
@@ -68,19 +98,25 @@ p {
   display: flex;
   justify-content: space-between;
 }
+
 .play-board {
   height: 100%;
   width: 100%;
   display: grid;
-  background: #212837;
+  background: #0d1f30;
   grid-template: repeat(30, 1fr) / repeat(30, 1fr);
 }
+
 .play-board .food {
-  background: #FF003D;
+  background: #F5402C;
+}
+
+.play-board .body {
+  background: #2E9DF7;
 }
 
 .play-board .head {
-  background: #60CBFF;
+  background: #FFC907;
 }
 
 @media screen and (max-width: 800px) {
