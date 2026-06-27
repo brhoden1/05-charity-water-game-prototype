@@ -119,6 +119,10 @@ p {
   background: #FFC907;
 }
 
+.play-board .obstacle {
+  background: #565656;
+}
+
 @media screen and (max-width: 800px) {
   .wrapper {
     width: 90vmin;

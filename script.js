@@ -10,6 +10,7 @@ let foodX, foodY;
 let snakeX = 5, snakeY = 5;
 let velocityX = 0, velocityY = 0;
 let snakeBody = [];
+let obstaclePositions = [];
 let setIntervalId;
 let score = 0;
 let hasTriggeredHighScoreConfetti = false;
@@ -20,6 +21,35 @@ highScoreElement.innerText = `High Score: ${highScore}`;
 
 const confettiContainer = document.querySelector('.confetti-container');
 const confettiColors = ['#FFC907', '#2E9DF7', '#4FCB53', '#FF902A', '#F5402C', '#8BD1CB'];
+
+const getRandomBoardPosition = () => {
+  return [Math.floor(Math.random() * 30) + 1, Math.floor(Math.random() * 30) + 1];
+};
+
+const isPositionOccupied = (x, y) => {
+  if (foodX === x && foodY === y) return true;
+  if (snakeX === x && snakeY === y) return true;
+  for (const [bodyX, bodyY] of snakeBody) {
+    if (bodyX === x && bodyY === y) return true;
+  }
+  for (const [obstacleX, obstacleY] of obstaclePositions) {
+    if (obstacleX === x && obstacleY === y) return true;
+  }
+  return false;
+};
+
+const createObstacle = () => {
+  let obstacleX, obstacleY;
+  let attempts = 0;
+  do {
+    [obstacleX, obstacleY] = getRandomBoardPosition();
+    attempts += 1;
+  } while (isPositionOccupied(obstacleX, obstacleY) && attempts < 1000);
+
+  if (!isPositionOccupied(obstacleX, obstacleY)) {
+    obstaclePositions.push([obstacleX, obstacleY]);
+  }
+};
 
 const createConfettiParticle = () => {
   const confetti = document.createElement('span');
@@ -129,6 +159,10 @@ const initGame = () => {
                 hasTriggeredHighScoreConfetti = true;
             }
         }
+
+        if (score % 5 === 0) {
+            createObstacle();
+        }
     }
     // Updating the snake's head position based on the current velocity
     snakeX += velocityX;
@@ -143,6 +177,13 @@ const initGame = () => {
     if(snakeX <= 0 || snakeX > 30 || snakeY <= 0 || snakeY > 30) {
         return gameOver = true;
     }
+    for (const [obstacleX, obstacleY] of obstaclePositions) {
+        html += `<div class="obstacle" style="grid-area: ${obstacleY} / ${obstacleX}"></div>`;
+        if (snakeX === obstacleX && snakeY === obstacleY) {
+            gameOver = true;
+        }
+    }
+
     for (let i = 0; i < snakeBody.length; i++) {
         // Add a div for the snake head, and a different class for the rest of the body
         const snakeClass = i === 0 ? "head" : "body";
